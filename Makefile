@@ -17,9 +17,6 @@ func.o: func.c integral.h
 integral.a: integral.o func.o
 	ar rc integral.a integral.o func.o
 
-main.o: main.c
-	gcc -g -c main.c -o main.o -lm
-
 integral_test.o: integral_test.c
 	gcc -g -c integral_test.c -o integral_test.o
 
