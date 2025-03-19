@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 void stack_test_1() {
-  Stack *st = create_stack();
+  Stack *st = create_stack(7);
   push(st, 5);
   push(st, 3);
   pop(st);
@@ -14,25 +14,18 @@ void stack_test_1() {
   clean_memory(st);
 }
 void stack_test_2() {
-  Stack *st = create_stack();
+  Stack *st = create_stack(3);
   push(st, 10);
   push(st, 10);
   push(st, 10);
   push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  assert(st->size == 20);
+  assert(st->size == 13);
   pop(st);
-  assert(st->size == 10);
+  assert(st->size == 3);
   clean_memory(st);
 }
 void stack_test_3() {
-  Stack *st = create_stack();
+  Stack *st = create_stack(0);
   push(st, 10);
   push(st, 2);
   push(st, 6);

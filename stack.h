@@ -4,7 +4,7 @@ typedef struct Stack {
   unsigned int top;
 } Stack;
 
-Stack *create_stack();
+Stack *create_stack(int start_size);
 void push(Stack *stack, int v);
 int is_not_empty(Stack *stack);
 int pop(Stack *stack);

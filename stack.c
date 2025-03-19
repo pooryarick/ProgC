@@ -1,12 +1,11 @@
 #include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define START_SIZE 10
 #define RESIZE 10
 
-Stack *create_stack() {
+Stack *create_stack(int start_size) {
   Stack *stack = malloc(sizeof(Stack));
-  stack->size = START_SIZE;
+  stack->size = start_size;
   stack->data = malloc(stack->size * sizeof(int));
   stack->top = 0;
   return stack;
