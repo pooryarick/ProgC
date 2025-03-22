@@ -20,9 +20,7 @@ void push(Stack *stack, int v) {
   stack->data[stack->top] = v;
   stack->top++;
 }
-int is_empty(Stack *stack) {
-  return !stack->top;
-}
+int is_empty(Stack *stack) { return !stack->top; }
 
 int pop(Stack *stack, int *out) {
   if (is_empty(stack)) {
