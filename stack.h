@@ -6,6 +6,6 @@ typedef struct Stack {
 
 Stack *create_stack(int start_size);
 void push(Stack *stack, int v);
-int is_not_empty(Stack *stack);
-int pop(Stack *stack);
+int is_empty(Stack *stack);
+int pop(Stack *stack, int *out);
 void clean_memory(Stack *);

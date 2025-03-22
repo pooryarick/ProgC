@@ -2,34 +2,32 @@
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void stack_test_1() {
   Stack *st = create_stack(7);
-  push(st, 5);
   push(st, 3);
-  pop(st);
-  push(st, 10);
-  assert(st->top == 2 && st->data[st->top - 1] == 10 &&
-         st->data[st->top - 2] == 5);
+  push(st, 5);
+  int *out = malloc(sizeof(int));
+  assert(pop(st, out) == 0);
+  assert(*out == 5);
+  free(out);
   clean_memory(st);
 }
 void stack_test_2() {
-  Stack *st = create_stack(3);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  push(st, 10);
-  assert(st->size == 13);
-  pop(st);
-  assert(st->size == 3);
+  Stack *st = create_stack(2);
+  int *out = malloc(sizeof(int));
+  assert(pop(st, out) == -1);
+  free(out);
   clean_memory(st);
 }
 void stack_test_3() {
-  Stack *st = create_stack(0);
+  Stack *st = create_stack(2);
+  assert(st->size == 2);
   push(st, 10);
   push(st, 2);
-  push(st, 6);
-  assert(pop(st) == 6 && pop(st) == 2 && pop(st) == 10);
+  push(st, 3);
+  assert(st->size == 12);
   clean_memory(st);
 }
 
