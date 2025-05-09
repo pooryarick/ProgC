@@ -20,7 +20,7 @@ quadratic_equation_test: quadratic_equation_test.o quadratic_equation.a
 	gcc -g -static -o quadratic_equation_test quadratic_equation_test.o quadratic_equation.a -lm
 
 integral.o: integral.c integral.h
-gcc -g -c integral.c -o integral.o
+	gcc -g -c integral.c -o integral.o
 
 integral.a: integral.o
 	ar rc integral.a integral.o
