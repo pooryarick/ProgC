@@ -77,4 +77,3 @@ test: quadratic_equation_test integral_test list_test stack_test pool_allocator_
 		echo "$$test is running"; \
 		./$$test || exit 1; \
 	done
-	
