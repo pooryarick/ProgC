@@ -59,7 +59,20 @@ stack_test.o: stack_test.c
 stack_test: stack_test.o stack.a
 	gcc -g -static -o stack_test stack_test.o stack.a -lm
 #------
-test: quadratic_equation_test integral_test list_test stack_test
+#-----linear_allocator
+linear_allocator.o: linear_allocator.c linear_allocator.h
+	gcc -g -c linear_allocator.c -o linear_allocator.o
+
+linear_allocator.a: linear_allocator.o
+	ar rc linear_allocator.a linear_allocator.o
+	
+linear_allocator_test.o: linear_allocator_test.c linear_allocator.h
+	gcc -g -c linear_allocator_test.c -o linear_allocator_test.o
+
+linear_allocator_test: linear_allocator_test.o linear_allocator.a
+	gcc -g -static -o linear_allocator_test linear_allocator_test.o linear_allocator.a -lm
+#------
+test: quadratic_equation_test integral_test list_test stack_test linear_allocator_test
 	@for test in $(shell find . -maxdepth 2 -type f -regex '.*_test'); do \
 		echo "$$test is running"; \
 		./$$test || exit 1; \
