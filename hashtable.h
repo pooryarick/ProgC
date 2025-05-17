@@ -10,11 +10,12 @@ typedef struct {
 typedef struct {
   size_t capacity;
   pool_allocator *allocator;
+  size_t value_size;
   item *items;
 } HashTable;
 
-int hashtable_init(HashTable *table, size_t capacity,
-                   pool_allocator *allocator);
+int hashtable_init(HashTable *table, size_t capacity, pool_allocator *allocator,
+                   size_t value_size);
 int hashtable_insert(HashTable *table, const char *key, void *value);
 void *hashtable_get(HashTable *table, const char *key);
 int hashtable_del(HashTable *table, const char *key);
