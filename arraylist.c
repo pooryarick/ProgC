@@ -1,7 +1,8 @@
 #include "arraylist.h"
 #include <string.h>
 
-int arraylist_init(ArrayList *list, pool_allocator *alloc) {
+int arraylist_init(ArrayList *list, pool_allocator *alloc,
+                   size_t element_size) {
   if (list == NULL || alloc == NULL) {
     return ALLOC_ERROR;
   }
@@ -9,13 +10,14 @@ int arraylist_init(ArrayList *list, pool_allocator *alloc) {
   list->allocator = alloc;
   list->capacity = INITIAL_CAPACITY;
   list->size = 0;
-  list->data = pool_alloc(alloc);
+  list->element_size = element_size;
+  list->head = pool_alloc(alloc);
 
-  if (list->data == NULL) {
+  if (list->head == NULL) {
     return ALLOC_ERROR;
   }
 
-  memset(list->data, 0, INITIAL_CAPACITY * sizeof(void *));
+  memset(list->head, 0, list->capacity * list->element_size);
   return SUCCESS;
 }
 
@@ -35,11 +37,13 @@ int arraylist_add(ArrayList *list, void *data, size_t index) {
   }
 
   if (index < list->size) {
-    memmove(&list->data[index + 1], &list->data[index],
-            (list->size - index) * sizeof(void *));
+    memmove(list->head + (index + 1) * list->element_size,
+            list->head + index * list->element_size,
+            (list->size - index) * list->element_size);
   }
 
-  list->data[index] = data;
+  memcpy(list->head + index * list->element_size, data, list->element_size);
+
   list->size++;
   return SUCCESS;
 }
@@ -49,7 +53,7 @@ void *arraylist_get(ArrayList *list, size_t index) {
     return NULL;
   }
 
-  return list->data[index];
+  return list->head + index * list->element_size;
 }
 
 int arraylist_del(ArrayList *list, size_t index) {
@@ -61,9 +65,12 @@ int arraylist_del(ArrayList *list, size_t index) {
     return OUTSIDE_LIST;
   }
 
-  memmove(&list->data[index], &list->data[index + 1],
-          (list->size - index - 1) * sizeof(void *));
-  list->data[list->size - 1] = NULL;
+  memmove(list->head + index * list->element_size,
+          list->head + (index + 1) * list->element_size,
+          (list->size - index - 1) * list->element_size);
+
+  memset(list->head + (list->size - 1) * list->element_size, 0,
+         list->element_size);
   list->size--;
 
   return SUCCESS;
@@ -74,14 +81,15 @@ int arraylist_free(ArrayList *list) {
     return ALLOC_ERROR;
   }
 
-  if (list->data != NULL) {
-    pool_free(list->allocator, (chunk *)list->data);
+  if (list->head != NULL) {
+    pool_free(list->allocator, list->head);
   }
 
-  list->data = NULL;
+  list->head = NULL;
   list->size = 0;
   list->capacity = 0;
   list->allocator = NULL;
+  list->element_size = 0;
 
   return SUCCESS;
 }
@@ -90,25 +98,26 @@ int expand(ArrayList *list) {
   if (list == NULL) {
     return ALLOC_ERROR;
   }
-  size_t new_capacity = list->capacity * 2;
 
-  if (new_capacity > list->allocator->chunks_num) {
+  list->capacity = list->capacity * 2;
+
+  void *new_head = pool_alloc(list->allocator);
+
+  if (new_head == NULL) {
     return ALLOC_ERROR;
   }
 
-  void **new_data = pool_alloc(list->allocator);
-
-  if (new_data == NULL) {
+  if (new_head == NULL) {
     return ALLOC_ERROR;
   }
 
-  memcpy(new_data, list->data, list->size * sizeof(void *));
-  memset(&new_data[list->size], 0,
-         (new_capacity - list->size) * sizeof(void *));
+  memcpy(new_head, list->head, list->size * list->element_size);
 
-  pool_free(list->allocator, (chunk *)list->data);
-  list->data = new_data;
-  list->capacity = new_capacity;
+  memset(new_head + list->size * list->element_size, 0,
+         (list->capacity - list->size) * list->element_size);
+
+  pool_free(list->allocator, list->head);
+  list->head = new_head;
 
   return SUCCESS;
 }
