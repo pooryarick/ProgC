@@ -58,8 +58,35 @@ stack_test.o: stack_test.c
 
 stack_test: stack_test.o stack.a
 	gcc -g -static -o stack_test stack_test.o stack.a -lm
+
+#-----
+#-----pool_allocator
+pool_allocator.o: pool_allocator.c pool_allocator.h
+	gcc -g -c pool_allocator.c -o pool_allocator.o
+
+pool_allocator.a: pool_allocator.o
+	ar rc pool_allocator.a pool_allocator.o
+	
+pool_allocator_test.o: pool_allocator_test.c pool_allocator.h
+	gcc -g -c pool_allocator_test.c -o pool_allocator_test.o
+
+pool_allocator_test: pool_allocator_test.o pool_allocator.a
+	gcc -g -static -o pool_allocator_test pool_allocator_test.o pool_allocator.a -lm
+#-----
+#-----arraylist
+arraylist.o: arraylist.c arraylist.h
+	gcc -g -c arraylist.c -o arraylist.o 
+
+arraylist.a: arraylist.o
+	ar rc arraylist.a arraylist.o
+	
+arraylist_test.o: arraylist_test.c arraylist.a
+	gcc -g -c arraylist_test.c -o arraylist_test.o
+
+arraylist_test: arraylist_test.o arraylist.a pool_allocator.a
+	gcc -g -static arraylist_test.o arraylist.a pool_allocator.a -o arraylist_test
 #------
-test: quadratic_equation_test integral_test list_test stack_test
+test: quadratic_equation_test integral_test list_test stack_test pool_allocator_test arraylist_test
 	@for test in $(shell find . -maxdepth 2 -type f -regex '.*_test'); do \
 		echo "$$test is running"; \
 		./$$test || exit 1; \
